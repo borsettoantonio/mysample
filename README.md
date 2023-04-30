@@ -1,16 +1,8 @@
-# Flutter: esempio di Form
+# Flutter: Esempio di gestione dello stato con setState()
 
-Esempio tratto dal libro "Flutter Complete Reference" di Alberto Miola a pag.529.
+Esempio tratto dal libro "Flutter Complete Reference" di Alberto Miola a pag.290.
 
-Come usare un Form per la raccolta dell'input;
+La chiamata a setState provoca sempre la ricostruzione di WidgetB,
+ma non quella di WidgetC che è definito const.
 
-uso del widget LayoutBuilder;
-
-validazione dell'input;
-
-gestione di keyboard e overflow con SingleChildScrollView;
-
-utilizzo della proprietà counterText della classe InputDecoration pr mostrare 
-il numero di caratteri che si possono ancora inserire;
-
-uso di snackBar per mostrare messaggi.
+Definendo WidgetC non-const allora anch'esso viene ricostruito a ogni chiamata di setState.
