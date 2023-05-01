@@ -34,7 +34,6 @@ class DemoPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              //WidgetB(s: "${counter.currentCount}"),
               WidgetB(),
               WidgetC(),
               Row(
@@ -44,10 +43,12 @@ class DemoPage extends StatelessWidget {
                       onPressed: () => counter.increment(),
                       child: const Text("+1",
                           style: TextStyle(color: Colors.green, fontSize: 25))),
-                  Text("Non funziona",
-                      style: const TextStyle(
-                        fontSize: 30,
-                      )),
+                  Consumer<CounterModel>(builder: (_, value, __) {
+                    return Text("${value.currentCount}",
+                        style: const TextStyle(
+                          fontSize: 30,
+                        ));
+                  }),
                   TextButton(
                       onPressed: counter.decrement,
                       child: const Text("-1",
@@ -61,19 +62,18 @@ class DemoPage extends StatelessWidget {
 }
 
 class WidgetB extends StatelessWidget {
-  //const WidgetB({super.key, required this.s});
-  //final String s;
-
   const WidgetB({super.key});
 
   @override
   Widget build(BuildContext context) {
     debugPrint("WidgetB");
-    final counter = Provider.of<CounterModel>(context);
-    return Text("${counter.currentCount}",
-        style: const TextStyle(
-          fontSize: 30,
-        ));
+
+    return Consumer<CounterModel>(builder: (_, value, __) {
+      return Text("${value.currentCount}",
+          style: const TextStyle(
+            fontSize: 30,
+          ));
+    });
   }
 }
 
