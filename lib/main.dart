@@ -27,14 +27,15 @@ class DemoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint("_DemoPageState");
 
-    final counter = Provider.of<CounterModel>(context);
+    final counter = Provider.of<CounterModel>(context, listen: false);
     return Scaffold(
         appBar: AppBar(title: const Text('LayoutBuilder Example')),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              WidgetB(s: "${counter.currentCount}"),
+              //WidgetB(s: "${counter.currentCount}"),
+              WidgetB(),
               WidgetC(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -43,8 +44,10 @@ class DemoPage extends StatelessWidget {
                       onPressed: () => counter.increment(),
                       child: const Text("+1",
                           style: TextStyle(color: Colors.green, fontSize: 25))),
-                  Text("${counter.currentCount}",
-                      style: TextStyle(color: Colors.amber, fontSize: 25)),
+                  Text("Non funziona",
+                      style: const TextStyle(
+                        fontSize: 30,
+                      )),
                   TextButton(
                       onPressed: counter.decrement,
                       child: const Text("-1",
@@ -58,13 +61,16 @@ class DemoPage extends StatelessWidget {
 }
 
 class WidgetB extends StatelessWidget {
-  const WidgetB({super.key, required this.s});
-  final String s;
+  //const WidgetB({super.key, required this.s});
+  //final String s;
+
+  const WidgetB({super.key});
 
   @override
   Widget build(BuildContext context) {
     debugPrint("WidgetB");
-    return Text(s,
+    final counter = Provider.of<CounterModel>(context);
+    return Text("${counter.currentCount}",
         style: const TextStyle(
           fontSize: 30,
         ));
