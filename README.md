@@ -1,14 +1,12 @@
-# Flutter: Esempio di gestione dello stato con Consumer - 3
-01.05.2023
+# Provider: esempio di metodo select
+02.05.2023
 
-Per evitare di dover incapsulare l'aggiornamento della UI in un diverso widget 
-(che sarà l'unico a essere ricostruito), posso usare il widget Consumer,
-che racchiude il Text che deve essere aggiornato, e che funziona allo stesso modo in cui,
-nella versione precedente, funzionava il WidgetB.
+Esempio di funzionamento di context.select().
 
-In tal modo solo il Consumer verrà aggiornato al cambiamento dello stato.
+Nel WidgetB ci sono due modi di accesso alla persona:
 
-Volendo anche il WidgetB può ancora visualizzare i cambiamenti dello stato usando Consumer.
+nel primo con context.select() il widget viene ricostruito solo se
+si aggiorna il campo selezionato;
 
-Da notare (nella debug console) che non viene ricostruito ne il WidgetB ne il WidgetC,
-Ma solo i widget Text.
+nel secondo con Provider.of<Person>() il widget viene ricostruito sempre
+ad ogni aggiornamento di Person.
