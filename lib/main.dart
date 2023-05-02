@@ -1,48 +1,49 @@
+import 'dart:collection';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Person with ChangeNotifier {
   Person({required this.name, required this.age});
 
-  String name;
+  final String name;
   int age;
 
   void increaseAge() {
     age++;
     notifyListeners();
   }
-
-  void changeName() {
-    name = "Gary";
-    notifyListeners();
-  }
 }
 
-class Countdown {
-  static Stream<String> start() async* {
-    var i = 10;
-    while (i > 0) {
-      await Future.delayed(Duration(seconds: 1), () {
-        i--;
-      });
-      yield i.toString();
-    }
+class Job with ChangeNotifier {
+  Job(
+    this.person, {
+    this.career,
+  });
 
-    yield "bLAsT oFf !!!";
+  final Person person;
+  String? career;
+
+  String get title {
+    if (person.age >= 28) return 'Dr. ${person.name}, $career PhD';
+    return '${person.name}, Student';
   }
+
+  void notifica()
+  {
+    notifyListeners();
+  } 
 }
 
 void main() {
   runApp(
     MultiProvider(
       providers: [
-        StreamProvider<String>(
-          create: (_) => Countdown.start(),
-          initialData: "Begin countdown...",
-          catchError: (_, error) => error.toString(),
-        ),
-        ChangeNotifierProvider<Person>(
-          create: (_) => Person(name: 'Yohan', age: 25),
+        ChangeNotifierProvider<Person>(create: (_) => Person(name: 'Yohan', age: 25)),
+        ChangeNotifierProxyProvider<Person, Job>(
+          create: (BuildContext context) => Job(Provider.of<Person>(context, listen: false)),
+          update: (BuildContext context, Person person, Job? job) => job!..notifica(),
+          //update: (BuildContext context, Person person, Job? job) => Job(person, career: 'Vet'),
         ),
       ],
       child: MyApp(),
@@ -66,52 +67,33 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Context extensions"),
+        title: const Text('Provider Class'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
+      body: Align(
+        alignment: Alignment.center,
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            border: Border.all(),
+            borderRadius: BorderRadius.circular(5.0),
+          ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              //Text("Name: ${Provider.of<Person>(context).name}"),
-              //Text("context.select: ${context.select((Person p) => p.age)}"),
-              const WidgetB(),
-              const WidgetA(),
-              Text("context.watch: ${context.watch<String>()}"),
+              Text(
+                'Hi, may name is ${context.select((Job j) => j.person.name)}',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              Text('Age: ${context.select((Job j) => j.person.age)}'),
+              Text(context.watch<Job>().title),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        onPressed: () => Provider.of<Person>(context, listen: false).increaseAge(),
         child: const Icon(Icons.add),
-        onPressed: () {
-          context.read<Person>().increaseAge();
-        },
       ),
     );
-  }
-}
-
-class WidgetA extends StatelessWidget {
-  const WidgetA({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    debugPrint("WidgetA");
-    final name = context.select((Person p) => p.age);
-    return Text(name.toString());
-  }
-}
-
-class WidgetB extends StatelessWidget {
-  const WidgetB({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    debugPrint("WidgetB");
-    //final name = context.select((Person p) => p.name);
-    //return Text(name);
-
-    return Text("Name: ${Provider.of<Person>(context).name}");
   }
 }

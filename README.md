@@ -1,12 +1,18 @@
-# Provider: esempio di metodo select
+# ChangeNotifierProxyProvider
 02.05.2023
 
-Esempio di funzionamento di context.select().
+Esempio di uso di ChangeNotifierProxyProvider.
 
-Nel WidgetB ci sono due modi di accesso alla persona:
+Da notare che se in ChangeNotifierProxyProvider si utilizza:
 
-nel primo con context.select() il widget viene ricostruito solo se
-si aggiorna il campo selezionato;
+update: (BuildContext context, Person person, Job? job) => Job(person, career: 'Vet'),
 
-nel secondo con Provider.of<Person>() il widget viene ricostruito sempre
-ad ogni aggiornamento di Person.
+in cui si ricrea un nuovo Job, non c'è bisogno di chiamare notifyListeners() in Job,
+e le chiamate a context.select e context.watch su Job vengono comunque aggiornate.
+
+Se invece si utilizza:
+
+update: (BuildContext context, Person person, Job? job) => job!..notifica(),
+
+in cui si modifica il Job esistente, occorre chiamare un metodo che contenga
+notifyListeners().
