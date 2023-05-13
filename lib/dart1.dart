@@ -1,9 +1,14 @@
-void calculate() {
+void calculate() async {
   Future<int> one = exampleOne();
-  Future<int> two = exampleTwo();
-  Future<int> three = exampleThree();
-  Future<List<int>> res = Future.wait<int>([one, two, three]);
-  res.then((re) => stampa(re)).catchError((_) => print('errore'));
+  Future<String> two = exampleTwo();
+  Future<double> three = exampleThree();
+  try {
+    List<dynamic> res = await Future.wait<dynamic>([one, two, three]);
+    stampa(res);
+  } catch (e) {
+    print('errore');
+  }
+  ;
 }
 
 Future<int> exampleOne() async {
@@ -13,25 +18,25 @@ Future<int> exampleOne() async {
   return Future<int>.value(1);
 }
 
-Future<int> exampleTwo() async {
+Future<String> exampleTwo() async {
   print('inizio exampleTwo');
-  final future = Future<int>.delayed(const Duration(seconds: 3), () {
+  final future = Future<String>.delayed(const Duration(seconds: 3), () {
     print('fine exampleTwo');
-    return 2;
+    return 'due';
   });
   return future;
 }
 
-Future<int> exampleThree() {
+Future<double> exampleThree() {
   // se si usa questa istruzione, viene stampato prima 'Called ...' e poi 'fatto'
   final future = Future<void>.sync(() => print("Called immediately"));
 
   // se si usa questa istruzione, viene stampato prima 'fatto' e poi 'Called ...'
   //Future(() => print("Called immediately"));
   print("fatto");
-  return Future<int>.value(3);
+  return Future<double>.value(3.3);
 }
 
-void stampa(List<int> res) {
+void stampa(List<dynamic> res) {
   for (var x in res) print(x);
 }
