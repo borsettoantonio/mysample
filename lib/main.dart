@@ -24,72 +24,82 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final Stream _myStream =
-      Stream.periodic(const Duration(seconds: 1), (int count) {
-    return count;
-  });
-  late StreamSubscription _sub;
+  late final StreamController<int> controller;
+
   bool end = false;
+  bool on = true;
 
   int _computationCount = 0;
 
-  Color _bgColor = Colors.blueGrey;
-
-  @override
-  void initState() {
-    /*
-    _sub = _myStream.listen((event) {
-      setState(() {
-        _computationCount = event;
-        _bgColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-      });
-    });
-    */
-    // oppure ...
-    f1();
-    super.initState();
-  }
-
-  void f1() async {
-    await for (var val in _myStream) {
-      if(end) break;
-      setState(() {
-        _computationCount = val;
-        _bgColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
+  void parti() async {
+    while (!end) {
+      await Future.delayed(const Duration(seconds: 1), () {
+        if (on) controller.add(++_computationCount);
       });
     }
   }
 
   @override
-  void dispose() {
-    _sub.cancel();
-    super.dispose();
+  void initState() {
+    controller = StreamController<int>(
+      onListen: parti,
+    );
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _bgColor,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Flutter Stream.periodic Demo'),
-        backgroundColor: Colors.white12,
-      ),
-      body: Center(
-        child: Text(
-          _computationCount.toString(),
-          style: const TextStyle(fontSize: 150, color: Colors.white),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
-        child: const Icon(
-          Icons.stop,
-          size: 30,
-        ),
-        //onPressed: () => _sub.cancel(),
-        onPressed: () => end=true,
-      ),
+    return StreamBuilder(
+      initialData: 0,
+      stream: controller.stream,
+      builder: (context, AsyncSnapshot<int> snapshot) {
+        var bgColor =
+            Colors.primaries[Random().nextInt(Colors.primaries.length)];
+        return Scaffold(
+          backgroundColor: bgColor,
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: const Text('Flutter Stream.periodic Demo'),
+            backgroundColor: bgColor,
+          ),
+          body: Center(
+            child: Text(
+              snapshot.data.toString(),
+              style: const TextStyle(fontSize: 150, color: Colors.white),
+            ),
+          ),
+          floatingActionButton: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+            FloatingActionButton(
+              backgroundColor: bgColor,
+              child: const Icon(
+                Icons.stop,
+                size: 30,
+              ),
+              onPressed: () => on = false,
+            ),
+            const SizedBox(width:20),
+            FloatingActionButton(
+              backgroundColor: bgColor,
+              child: const Icon(
+                Icons.start,
+                size: 30,
+              ),
+              onPressed: () => on = true,
+            ),
+            const SizedBox(width:20),
+            FloatingActionButton(
+              backgroundColor: bgColor,
+              child: const Icon(
+                Icons.fiber_manual_record_outlined ,
+                size: 30,
+              ),
+              onPressed: () => end = true,
+            ),
+          ]),
+        );
+      },
     );
   }
 }
